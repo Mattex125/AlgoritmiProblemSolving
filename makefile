@@ -8,6 +8,8 @@
 # Variabili per il compilatore, le opzioni di compilazione e link
 # e i file sorgente e oggetto
 
+#versione algo
+
 # variabile per il compilatore C
 CC = g++  
 # opzioni di compilazione
@@ -22,10 +24,11 @@ LDFLAGS = -lm
 # Utilizza wildcard per prendere tutti i file .c nella cartella corrente
 # e crea i file .o corrispondenti
 SRC = $(wildcard *.c)
-# Sostituisce l'estensione .cc con .o per i file oggetto
+# Sostituisce l'estensione .c con .o per i file oggetto
 OBJ = $(SRC:.c=.o)
 INC = $(wildcard *.h)
-TARGET = $(basename $(firstword $(SRC)))
+# Crea un eseguibile per ogni file .c
+TARGETS = $(SRC:.c=)
 # Librerie esterne
 # Le librerie mod1 e mod2 sono necessarie per il progetto
 # LIB = -lmod1 -lmod2
@@ -42,25 +45,23 @@ TARGET = $(basename $(firstword $(SRC)))
 
 
 
-%.o: %.cc $(INC) #indica che per ogni file sorgente con estensione .cc, verrà generato un file oggetto con estensione .o
+%.o: %.c $(INC) #indica che per ogni file sorgente con estensione .c, verrà generato un file oggetto con estensione .o
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
 
 # Pattern Matching con %:
 # Il simbolo % è un wildcard che rappresenta una parte generica del nome del file.
-#  Ad esempio, se hai un file main.cc, il % corrisponderà a main, e la regola genererà main.o.
+#  Ad esempio, se hai un file main.c, il % corrisponderà a main, e la regola genererà main.o.
 
-
-
-
-$(TARGET): $(OBJ)
-	$(LD) $(LDFLAGS) $(OBJ) -o $@
+# Regola per creare un eseguibile da ogni file .o
+%: %.o
+	$(LD) $(LDFLAGS) $< -o $@
 
 # Regola di link
-all: $(TARGET)
+all: $(TARGETS)
 
 
 # Regola di pulizia
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(TARGETS)
