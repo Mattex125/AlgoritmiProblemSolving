@@ -78,7 +78,18 @@ int code(int snowflake[])//input array di 6 numeri
     return sum;
 }
 
-
+void freeMM(Snowflake_node *array[]){
+    for (int i=0; i<SIZE; i++)
+    {
+        while(array[i]!=NULL) //empyting list for every list in snowflakes array
+        {
+            Snowflake_node *nodoDeallocate = array[i]; //temp var
+            array[i] = array[i]->next; //puting next ad first
+            free(nodoDeallocate); //free tmp
+        }
+    }    
+    //free (array);
+}
 
 int main(void) {
     int nele, i, j,snowflake_code;
@@ -101,5 +112,7 @@ int main(void) {
         snowflakes[snowflake_code]=snow;
     }
     identify_identical(snowflakes,SIZE);
+    freeMM(snowflakes);
+    //snowflakes (array) cannot be deallocated it's static so no in the heap
     return 0;
 }
