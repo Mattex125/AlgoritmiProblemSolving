@@ -11,7 +11,7 @@ typedef struct {
 bool can_connect_exactly(Point a, Point b, int n) {
     int d = abs(a.x - b.x) + abs(a.y - b.y);  // axis-only distance
     return (n >= d) && ((n - d) % 2 == 0); //return true
-    //if it's reachable and steps to reach is pair all good (wasting takes 2 steps)
+    //if it's reachable and since wasting takes 2 steps we can take optimal (axist real distance +2n)
 }
 
 int main(void) {
