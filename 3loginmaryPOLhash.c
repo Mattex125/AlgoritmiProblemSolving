@@ -1,4 +1,6 @@
 //https://dmoj.ca/problem/coci17c1p3hard
+
+//gioca con le costanti
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,17 +16,15 @@ typedef struct psw_node{
     struct psw_node* next;
 }psw_node;
 
-unsigned int oaat_hash(const char *key, unsigned bits) {
+unsigned int polynomial_hash(const char *key, unsigned bits) {
+    const unsigned int a = 911382323u;
+    const unsigned int b = 1000000007u;
     unsigned int hash = 0;
-    while (*key) {
-        hash += (unsigned char)(*key++);
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
 
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
+    while (*key) {
+        hash = (unsigned int)(((unsigned long long)hash * a + (unsigned char)(*key)) % b);
+        key++;
+    }
 
     return hash & ((1u << bits) - 1u);
 }
@@ -32,7 +32,7 @@ unsigned int oaat_hash(const char *key, unsigned bits) {
 psw_node *inhashtable(psw_node *hash_table[],char *find){ //cerca find in the hash table
     unsigned code;
     psw_node *password_ptr;
-    code=oaat_hash(find, NUM_BITS);
+    code=polynomial_hash(find, NUM_BITS);
     password_ptr=hash_table[code];// scorro la lista
     while(password_ptr!=NULL)
     {
@@ -49,12 +49,12 @@ void add2hashtable(psw_node *hash_table[], char *find){
     passoword_ptr=inhashtable(hash_table,find);
     if (!passoword_ptr)
     {
-        code=oaat_hash(find, NUM_BITS);
+        code=polynomial_hash(find, NUM_BITS);
         passoword_ptr=(psw_node *)malloc(sizeof(psw_node));
-    strcpy(passoword_ptr->password,find);
-    passoword_ptr->total=0;
-    passoword_ptr->next=hash_table[code];
-    hash_table[code]=passoword_ptr;
+        strcpy(passoword_ptr->password,find);
+        passoword_ptr->total=0;
+        passoword_ptr->next=hash_table[code];
+        hash_table[code]=passoword_ptr;
     }
     passoword_ptr->total++;
 }
@@ -75,40 +75,47 @@ int main() {
         switch (op) 
         {
         case 1: //add
-        {
             // a string of length n has exactly n*(n+1)/2 distinct positional substrings (sum first n numbers)
             char *seen[(MAX_PSW*(MAX_PSW+1))/2]={NULL};
             int seen_count=0; //how many subs strings seen
-            for (int i=0; i<strlen(psw);i++)
-                for(int j=i; j<strlen(psw);j++)
+
+            int n=strlen(psw);
+
+            for (int i=0; i<n;i++)
+                for(int j=i; j<n;j++)
                 {
                     int alreadyinhash=0;
+
                     strncpy(substr,&psw[i],j-i+1); //creo substr
-                    substr[j-i+1]='\0'; 
+                    substr[j-i+1]='\0';
+
                     // scan only the substrings we already stored, not the whole array
                     for (int h=0;h<seen_count;h++)
                     {
                         if(seen[h]!=NULL)
                         {
                             if(strcmp(seen[h],substr)==0)//duplicated
-                            alreadyinhash=1;
+                                alreadyinhash=1;
                         }
                     }
+
                     if(alreadyinhash==0)
                     {
                         //we allocate new arr for newsubstr
                         seen[seen_count]=(char*)malloc(strlen(substr)+1);
                         strcpy(seen[seen_count],substr);
                         seen_count++;
+
                         add2hashtable(hashtable,substr);
                     }
                 }
+
             // release all allocated for this password's substrings
-            //for(int h=0;h<seen_count;h++) { free(seen[h]); seen[h]=NULL; }
+            for(int h=0;h<seen_count;h++) { free(seen[h]); seen[h]=NULL; }
+
             break;
-        }
+
         case 2: //query
-        {
             passwordptr=inhashtable(hashtable,psw);
             if(!passwordptr)
                 printf("0\n");
@@ -116,8 +123,9 @@ int main() {
                 printf("%d\n",passwordptr->total);
             break;
         }
-        }
+
         num_op--;
     }
+
     return 0;
 }
