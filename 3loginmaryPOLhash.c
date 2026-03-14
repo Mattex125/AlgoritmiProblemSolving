@@ -59,7 +59,6 @@ void add2hashtable(psw_node *hash_table[], char *find){
     passoword_ptr->total++;
 }
 
-//a volte fa errori capire why
 int main() {
     static psw_node* hashtable[1<<NUM_BITS]={NULL};//2 alla 20 slots
     //leggo q, n ops da fare
@@ -75,6 +74,7 @@ int main() {
         switch (op) 
         {
         case 1: //add
+        {
             // a string of length n has exactly n*(n+1)/2 distinct positional substrings (sum first n numbers)
             char *seen[(MAX_PSW*(MAX_PSW+1))/2]={NULL};
             int seen_count=0; //how many subs strings seen
@@ -114,6 +114,7 @@ int main() {
             for(int h=0;h<seen_count;h++) { free(seen[h]); seen[h]=NULL; }
 
             break;
+        }
 
         case 2: //query
             passwordptr=inhashtable(hashtable,psw);
