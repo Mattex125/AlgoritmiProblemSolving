@@ -1,4 +1,4 @@
-#include <stdio.h>
+    #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -51,41 +51,39 @@ void sol(root* t){
     printf("%d %d\n",numstreets,candy);
 }
 
-tree_node* readtree(char in[],int * idx){
+tree_node* readtree(char in[],int *skips){
     root* currentNode=(root*) malloc(sizeof(root));
-
-    while(in[*idx] == ' ') //skip whitespaces
-        (*idx)++;
-
-    if (in[*idx]=='('){
-        (*idx)++;
-        currentNode->l=readtree(in,idx);
-        while(in[*idx]==' '){
-        (*idx)++;
-        }
-        currentNode->r=readtree(in,idx);
-        while(in[*idx]==' '){
-        (*idx)++;
-        }
-        (*idx)++;   // skip ')'
+    while(in[*skips]==' ' || in[*skips]==')'){ //pulire input
+        (*skips)++;
     }
-    if (in[*idx] >= '0' && in[*idx] <= '9'){ //fucking reading 2 digits
-        int value = 0;
-        while(in[*idx] >= '0' && in[*idx] <= '9'){
-            value = value * 10 + (in[*idx] - '0');
-            (*idx)++;
-        }
-
-        currentNode->candy = value;
-        currentNode->l = NULL;
-        currentNode->r = NULL;
+    if (in[*skips]=='('){
+        ++(*skips); //i get number
+        currentNode->l=readtree(in,skips);
+        ++(*skips); //next
+        currentNode->r=readtree(in,skips);
+        return currentNode;
     }
-    return(currentNode);
+    if ((in[*skips] >= '0' && in[*skips] <= '9') && (in[*skips+1] >= '0' && in[*skips+1] <= '9')) {
+        // double digit
+        currentNode->candy = (in[*skips] - '0') * 10 + (in[*skips+1] - '0');
+        //after read n gotta move ptr
+        (*skips) = (*skips) + 2;
+    } else if (in[*skips] >= '0' && in[*skips] <= '9') {
+        // single digits
+        currentNode->candy = (in[*skips] - '0');
+        //after read n gotta move ptr
+        (*skips) = (*skips) + 1;
+    }
+    //end of base case
+    currentNode->l = NULL;
+    currentNode->r = NULL;
+    return currentNode;
 }
+
 void deallocate_tree(root* t){
     if(t->l==NULL && t->l==NULL)
     free(t);
-    return
+    return;
     deallocate_tree(t->l);
     deallocate_tree(t->r);
 }
@@ -98,5 +96,6 @@ int main(){
         //fgets(str, 257, stdin);
         root *albero=readtree(str,&i);
         sol(albero);
+        free(albero);
     }
 }
