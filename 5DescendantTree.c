@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAXNAME 10
+
+typedef struct node
+{
+    int nchildren;
+    struct node **children; /*ptr to an array of ptrs*/
+    int score;
+    char *name; //why name[] error?
+}node;
+
+void *mallocsafe(size_t size){
+    void *mem = malloc(size);
+    if (mem == NULL){
+        fprintf(stderr, "malloc failed\n");
+        exit(1);
+    }
+    return mem;
+}
+
+//update
+node *findnode(node** nodes, int num_nodes, char *name){//cerco nel maxiarrays, se trovo il nome do il suo ptr
+    for(int i=0;i<num_nodes;i++)
+    {
+        if(strcmp(nodes[i]->name,name)==0) //found
+            return nodes[i];//return ptr so that node
+    }
+    return NULL; //not in array
+}
+
+node *newnode(char *name){//creo un nodo con il suo nome
+    node *n=(node *)mallocsafe(sizeof(node));
+    n->name=name;
+    n->nchildren=0;
+    return n;
+}
+
+
+int score_one(node* node,int d){
+    //non cotrllo se è vuoto perche non uso albero, uso array, se non ha figli ha numfigli=0
+    if(d==1) //base case
+        return node->nchildren;
+    int score=0;
+    for(int i=0;i<node->nchildren;i++){//recursion
+        score+=score_one(node->children[i],d-1);
+    }
+    return score;
+}
+
+
+//array di tutti i nodi che ho, questo perche l'albero non è conesso fin da subito
+
+void scoreall(node ** nodes, int nnodes, int d){
+    for (int i=0;i<nnodes;i++)
+        nodes[i]->score=score_one(nodes[i],d);
+}
+
+int readtrees(node ** nodes,int nlines){ //quanti nodi ho aggiunto
+    node *parent,*child;
+    char *pname,*cname;
+    int numchilden;
+    int nnodes=0;
+    for(int i=0; i<nlines;i++){
+        pname=(char *)mallocsafe(MAXNAME+1);//salvo nome 
+        //read the line until n children
+        scanf("%s",pname);
+        scanf("%d",&numchilden);
+        parent=findnode(nodes,nnodes,pname); //cerco nel array
+        if (parent==NULL){
+            parent=newnode(pname);
+            nodes[nnodes++]=parent;
+        }
+        else //padre c'era gia
+        {
+            free(pname);
+        }
+        //now we gotta read children
+        parent->children=(node **)mallocsafe(sizeof(node*)*numchilden);//alloco array children
+        parent->nchildren=numchilden;
+        //per every children
+        for(int j=0;j<parent->nchildren;j++){
+            cname=(char *)mallocsafe(MAXNAME+1);
+            scanf("%s",cname);
+            child=findnode(nodes,nnodes,cname);
+            if(child==NULL)//if there is not child
+                {
+                    child=newnode(cname);
+                    nodes[nnodes++]=child;
+                }
+            else
+            {
+                free(cname);
+            }
+            //entriamo nel nodo padre e lo colleghiamo ai children
+            parent->children[j]=child;
+        }
+    }
+    return nnodes;
+}
+//FARE, STAMPARE NODI CON HIGHEST SCORE
+//se hai le palle invece del array hash table per non fare il grio
+
+int main()
+{
+    int num_tests;
+    scanf("%d",&num_tests);
+    for (int i=0; i<num_tests;i++){ //per every test
+        int num_lines,d;
+        scanf("%d %d",&num_lines,&d); //starting
+        node** nodes=(node **)mallocsafe(sizeof(node*)*1000000);
+        int totalread=readtrees(nodes,num_lines);
+        scoreall(nodes,totalread,d);
+        for (int j=0;j<totalread;j++)
+            printf("%s %d\n", nodes[j]->name, nodes[j]->score);
+        }
+    return 0;
+}
