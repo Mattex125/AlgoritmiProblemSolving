@@ -96,6 +96,6 @@ int main(){
         //fgets(str, 257, stdin);
         root *albero=readtree(str,&i);
         sol(albero);
-        free(albero);
+        deallocate_tree(albero);
     }
 }

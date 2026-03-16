@@ -54,31 +54,31 @@ void sol(root* t){
 tree_node* readtree(char in[],int * idx){
     root* currentNode=(root*) malloc(sizeof(root));
 
-    while(in[*idx] == ' ') //skip whitespaces
-        (*idx)++;
+    //while(in[*idx] == ' ') //skip whitespaces
+    //    (*idx)++;
 
     if (in[*idx]=='('){
         (*idx)++;
         currentNode->l=readtree(in,idx);
-        while(in[*idx]==' '){
+        //while(in[*idx]==' '){
         (*idx)++;
-        }
+        //}
         currentNode->r=readtree(in,idx);
-        while(in[*idx]==' '){
-        (*idx)++;
-        }
+        //while(in[*idx]==' '){
+        //(*idx)++;
+        //}
         (*idx)++;   // skip ')'
     }
-    if (in[*idx] >= '0' && in[*idx] <= '9'){ //fucking reading 2 digits
+    if (in[*idx] >= '0' && in[*idx] <= '9'){ //fucking reading 2or more digits
         int value = 0;
         while(in[*idx] >= '0' && in[*idx] <= '9'){
             value = value * 10 + (in[*idx] - '0');
             (*idx)++;
         }
-
         currentNode->candy = value;
         currentNode->l = NULL;
         currentNode->r = NULL;
+        (*idx)++;
     }
     return(currentNode);
 }
