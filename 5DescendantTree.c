@@ -21,12 +21,11 @@ void *mallocsafe(size_t size){
     return mem;
 }
 
-//update
 node *findnode(node** nodes, int num_nodes, char *name){//cerco nel maxiarrays, se trovo il nome do il suo ptr
     for(int i=0;i<num_nodes;i++)
     {
         if(strcmp(nodes[i]->name,name)==0) //found
-            return nodes[i];//return ptr so that node
+            return nodes[i];//return ptr i knwo were is that node
     }
     return NULL; //not in array
 }
@@ -35,6 +34,7 @@ node *newnode(char *name){//creo un nodo con il suo nome
     node *n=(node *)mallocsafe(sizeof(node));
     n->name=name;
     n->nchildren=0;
+    n->children=NULL;//intanto che non ho figli setto a null
     return n;
 }
 
@@ -68,10 +68,10 @@ int readtrees(node ** nodes,int nlines){ //quanti nodi ho aggiunto
         //read the line until n children
         scanf("%s",pname);
         scanf("%d",&numchilden);
-        parent=findnode(nodes,nnodes,pname); //cerco nel array
+        parent=findnode(nodes,nnodes,pname); //cerco nel array se ho gia allocato costui
         if (parent==NULL){
             parent=newnode(pname);
-            nodes[nnodes++]=parent;
+            nodes[nnodes++]=parent;//aggiungo maxiarray
         }
         else //padre c'era gia
         {
@@ -100,11 +100,40 @@ int readtrees(node ** nodes,int nlines){ //quanti nodi ho aggiunto
     }
     return nnodes;
 }
-//FARE, STAMPARE NODI CON HIGHEST SCORE
-//se hai le palle invece del array hash table per non fare il grio
 
+int cmp2nodes(const void *a,const void *b){
+    //standard for sorting
+    node *n1 = *(node **)a;
+    node *n2 = *(node **)b;
+
+    if(n1->score>n2->score)
+        return -1;
+    if(n1->score<n2->score)
+        return 1;
+    return strcmp(n1->name, n2->name);
+}
+
+void getwinners(node ** nodes, int n){
+    qsort(nodes,n,sizeof(node *),cmp2nodes);
+    //print podium
+    int i;
+    for(i=0; i<3 && nodes[i]->score>0; i++)
+        printf("%s %d\n",nodes[i]->name,nodes[i]->score);
+    while (nodes[2]->score==nodes[i]->score && nodes[i]->score>0){//if tie print until break
+        printf("%s %d\n",nodes[i]->name,nodes[i]->score);
+        i++;}   
+}
+
+void freenodes(node ** nodes,int n){
+    for(int i=0;i<n;i++){
+        free(nodes[i]->children);
+        free(nodes[i]->name);
+        free(nodes[i]);
+    }
+    free(nodes);
+}
 int main()
-{
+{   //my erros was to not understand input, num lines!=num nodes
     int num_tests;
     scanf("%d",&num_tests);
     for (int i=0; i<num_tests;i++){ //per every test
@@ -113,8 +142,11 @@ int main()
         node** nodes=(node **)mallocsafe(sizeof(node*)*1000000);
         int totalread=readtrees(nodes,num_lines);
         scoreall(nodes,totalread,d);
-        for (int j=0;j<totalread;j++)
-            printf("%s %d\n", nodes[j]->name, nodes[j]->score);
+        //
+        printf("Tree %d:\n",i+1);
+        getwinners(nodes,totalread);
+        printf("\n");
+        freenodes(nodes,totalread);
         }
     return 0;
 }

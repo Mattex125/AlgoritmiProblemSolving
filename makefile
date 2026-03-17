@@ -11,12 +11,12 @@
 #versione algo
 
 # variabile per il compilatore C
-CC = g++  
+CC = gcc 
 # opzioni di compilazione
 # -Wall abilita tutti i warning, -g aggiunge informazioni di debug
 CFLAGS = -Wall -g 
  # linker
-LD = g++
+LD = gcc #or g++
 # opzioni di link
 # -lm linka la libreria matematica
 LDFLAGS = -lm 
