@@ -103,7 +103,7 @@ int readtrees(node ** nodes,int nlines){ //quanti nodi ho aggiunto
 
 int cmp2nodes(const void *a,const void *b){
     //standard for sorting
-    node *n1 = *(node **)a;
+    node *n1 = *(node **)a;//ptr to a pointer(array) that points to a ptr node
     node *n2 = *(node **)b;
 
     if(n1->score>n2->score)
@@ -150,3 +150,9 @@ int main()
         }
     return 0;
 }
+
+//fare tree candy non ricorsiva
+//in questo problema, usare hash
+//trovare avi (ascendenti) in dist k (0 se non esiste
+//) prima in o(n) poi in log(n)
+//es 4 da fare a csaa
