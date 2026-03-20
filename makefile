@@ -56,7 +56,10 @@ TARGETS = $(SRC:.c=)
 
 # Regola per creare un eseguibile da ogni file .o
 %: %.o
-	$(LD) $(LDFLAGS) $< -o $@
+	$(LD) $< -o $@ $(LDFLAGS)
+
+x2.1SpellingCheck: x2.1SpellingCheck.o
+	$(LD) $< -o $@ $(LDFLAGS)
 
 # Regola di link
 all: $(TARGETS)
