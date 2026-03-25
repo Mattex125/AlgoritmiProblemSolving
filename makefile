@@ -33,6 +33,8 @@ TARGETS = $(SRC:.c=)
 # Le librerie mod1 e mod2 sono necessarie per il progetto
 # LIB = -lmod1 -lmod2
 
+.DEFAULT_GOAL := all
+
 # Regole di compilazione e link
 # Compila i file .cc in file .o e poi linka i file .o in un eseguibile
 # $< è il primo prerequisito della regola ( ovvero un file sorgente) , $@ è il nome del target
