@@ -10,7 +10,7 @@ typedef struct promo { //promos
 typedef struct node { //lista di k to test
     int val;
     struct node* next;
-} node;
+} node; 
 
 int nelems = 0;
 
@@ -60,7 +60,8 @@ double solvek(promo* head, int nelems, double unit_price) {
     if (nelems < MEMSIZE && memo[nelems] >= 0)
         return memo[nelems];
 
-    double min = unit_price * nelems; // compra tutto senza promo
+    //ogni volta calcolo il prezzo tutti unit e poi cerco di migliorare, why dont use k-1? DONE
+    double min = solvek(head, nelems - 1, unit_price) + unit_price;
 
     promo* curr = head;
     while (curr != NULL) {
@@ -144,7 +145,6 @@ int main() {
 
         while (tmp != NULL) {
             double min = 1e9;
-
             for (int k = tmp->val; k <= tmp->val + maxobj; k++) {
                 double res = solvek(plist, k, unit_price);
                 if (res < min)

@@ -40,10 +40,10 @@ double solve_k(int num[], double prize[], int nschemas, double unitprize, int n2
     double best, result;
     if (memo[n2buy]!=-1)
         return memo[n2buy];
-    if(n2buy==0) //actuaòòy not needed
+    if(n2buy==0) //actually not needed, it's inside a memo!=-1
         return 0;
     else{
-        result=solve_k(num,prize,nschemas,unitprize,n2buy-1,memo); //IP compro tutte piu una mela
+        result=solve_k(num,prize,nschemas,unitprize,n2buy-1,memo); //IP compro tutte piu una mela, dopo verifica diversamente
         best=result+unitprize; //best og n-1 mele +1 unitaria
         for(int j=0; j<nschemas; j++){//controllo tutte le offerte
             if(n2buy-num[j]>=0) //che possa doverle comprare, CERCO SOLO CON ESATTAMENTE K mele 2buy
