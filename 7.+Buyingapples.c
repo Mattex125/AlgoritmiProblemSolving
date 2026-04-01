@@ -103,7 +103,7 @@ int main(){
     double UnitPrize;
     int Nschemas;
     int Ncases=1;
-    while(scanf("%lf %d",&UnitPrize,&Nschemas)!= EOF)//more secure ==2
+    while(scanf("%lf %d",&UnitPrize,&Nschemas)!=EOF)//more secure ==2
     {
         int NumApples[Nschemas];
         double PromoPrize[Nschemas];
