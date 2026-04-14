@@ -7,12 +7,12 @@ int min2(int a, int b) {
     return (a < b) ? a : b;
 }
 
-int solve(int fee[],int rncost,int whereiam,int n,int lastjump,int **memo){
+int solve(int fee[],int whereiam,int n,int lastjump,int **memo){
     if (memo[whereiam][lastjump]!=-1) //info da cui posso dedurreof?  futuro
         return memo[whereiam][lastjump];
     //base case i got to end
     if(whereiam==n-1)
-        return rncost;
+        return 0;
     //i am out of bounds
     if(whereiam>n-1 || whereiam<0)
         return INF;
@@ -20,12 +20,20 @@ int solve(int fee[],int rncost,int whereiam,int n,int lastjump,int **memo){
     int next=whereiam+lastjump+1;
     int sol1=INF; //forward
     int sol2=INF; //backward
-    if(next<n)
-        sol1=solve(fee, rncost+fee[next],next, n, lastjump+1,memo); //same that prof
-    if(whereiam-lastjump>=0)
-        sol2=solve(fee,rncost+fee[whereiam-lastjump],whereiam-lastjump,n,lastjump,memo);
+    int min;
+    if(next<n)//can i jump?
+        sol1=solve(fee,next, n, lastjump+1,memo);
+    if(whereiam-lastjump>=0)//can i go back?
+        sol2=solve(fee,whereiam-lastjump,n,lastjump,memo);
 
-    return memo[whereiam][lastjump]=min2(sol1,sol2);
+    //formatting sols
+    if (sol1 != INF)
+        sol1 = sol1 + fee[next];
+    if (sol2 != INF)
+        sol2 = sol2 + fee[whereiam-lastjump];
+
+    min = min2(sol1, sol2);
+    return memo[whereiam][lastjump] = min;
 }
 
 
@@ -59,15 +67,15 @@ int main(void) {
     }
     // Nikola starts at square 1 (index 0)
     // first jump must be to square 2 (index 1), length = 1
-    int ans = solve(fee, fee[1], 1, n, 1,memo);
+    int ans = solve(fee, 1 , n, 1,memo)+fee[1];
     printf("%d\n", ans);    
-    
+    /*
     for(int i=0; i<n; i++){
         for(int j = 0; j < n; j++){
             printf("%d ", memo[i][j]);
         }
         printf("\n");
-    }
+    }*/
     free(fee);
     return 0;
 }
