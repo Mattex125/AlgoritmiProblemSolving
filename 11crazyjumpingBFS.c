@@ -28,12 +28,12 @@ int tryjump_rec(int j, int h, int nj[], int pos) { //jump, h2reach, not jump, ac
                 }
             // i go forward
             int nextjumpland=x+j;
-            if(nextjumpland >= 0 && nextjumpland <= h && nj[nextjumpland] != 1 && neededmoves[nextjumpland] == -1) {
+            if(nextjumpland >= 0 && nextjumpland < h && nj[nextjumpland] != 1 && neededmoves[nextjumpland] == -1) {
                 new[currentnew++]=nextjumpland;
                 neededmoves[nextjumpland]=neededmoves[x]+1;
             }
             //i go backwards
-            for (int k=x; k>0; k--){
+            for (int k=x; k>=0; k--){
                 if(nj[k]!=1 && neededmoves[k]==-1){
                     new[currentnew++]=k;
                     neededmoves[k]=neededmoves[x]+1;

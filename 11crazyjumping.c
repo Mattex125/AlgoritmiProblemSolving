@@ -4,7 +4,7 @@
 #define INF INT_MAX-1
 
 /*
-BREAKS STACK, REC 0-->5, 5-->0 ...
+BREAKS STACK, REC 0-->5, 5-->1, 1-->0 ...
 */
 
 int scegli_min_no_negativi(int n1, int n2, int *best) {
@@ -46,7 +46,7 @@ int tryjump_rec(int j, int h, int nj[], int pos) { //jump, h2reach, not jump, ac
     //why bfs and not recursione (for every distance i try jump behind)
     option2=INF;
     int option2pos=pos;
-    for (int i=pos-1 ;i>=0 && i>=pos-j;i--){//i try all jumps behind, never below 0
+    for (int i=pos-1 ;i>=0 && i>pos-j;i--){//i try all jumps behind, never below 0
         if(i<=max_pos && nj[i]!=1){
             int attemp=1+tryjump_rec(j, h, nj, i);//i start from pos-1,pos-2....
             if(attemp<option2){

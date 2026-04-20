@@ -50,7 +50,7 @@ int tryjump_rec(int j, int h, int nj[], int pos, unsigned char visited[]) { //ju
         option1=1+tryjump_rec(j, h, nj, pos + j, visited);//rec case-->1+what i'll come
     //why bfs and not recursione (for every distance i try jump behind)
     option2=INF;
-    for (int i=pos-1 ;i>=0;i--){//i can drop to any lower i >= 0
+    for (int i=pos-1 ;i>=0 && i>pos-j;i--){//i try all jumps behind, never below 0
         if(i<=max_pos && nj[i]!=1){
             int attemp=1+tryjump_rec(j, h, nj, i, visited);//i start from pos-1,pos-2....
             if(attemp<option2){
