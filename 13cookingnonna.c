@@ -1,5 +1,6 @@
 //leggere matrix adj e metterla in lista adj
 #define MAXT 700
+#define MOD 1000000
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,19 +15,21 @@ typedef struct edge {
 void solve(edge *adjlist[], int ntowns, int store[]){
     static int done[MAXT+1][2];//n nodo e lo stato 0, 1 si cookie
     static int mind[MAXT+1][2];//min distances
+    static int npaths[MAXT+1][2];//num min paths
     int i,j,state,found;
     int md, mtidx, minstateidx, olddist;
     edge *e;
-    int countersol=0;
     //inizializzo
     for (i = 1; i <= ntowns; i++) {
         for (state = 0; state < 2; state++) {
             done[i][state] = 0;
             mind[i][state] = -1;
+            npaths[i][state] = 0;
         }
     }
     //start
     mind[1][0]=0;
+    npaths[1][0]=1;
 //search 4 less dist
     for(i=0; i<ntowns*2 ; i++){// doppio numero town, x ogni town 2 states
         md=-1;
@@ -44,6 +47,7 @@ void solve(edge *adjlist[], int ntowns, int store[]){
                     }
                 }
             }
+        }
         if(!found) //if cant explore i have finisced visit
             break;
         done[mtidx][minstateidx]=1; //set to done what we'll explore
@@ -53,8 +57,13 @@ void solve(edge *adjlist[], int ntowns, int store[]){
         if(minstateidx==0 && store[mtidx]) //we are in a cookie store so we transit to tate one
         {
             olddist=mind[mtidx][1]; //old dist to cookie on that node
-            if(olddist==-1 || olddist>md)
+            if(olddist==-1 || olddist>md){
                 mind[mtidx][1]=md;//i set min dist to get a cookie
+                npaths[mtidx][1]=npaths[mtidx][0]%MOD;
+            }
+            else if(olddist==md){
+                npaths[mtidx][1]=(npaths[mtidx][1]+npaths[mtidx][0])%MOD;
+            }
         }
         else { //explore nearby
             e=adjlist[mtidx];
@@ -64,21 +73,17 @@ void solve(edge *adjlist[], int ntowns, int store[]){
                 if(olddist == -1 || olddist > newdist){ //if i have better
                     //set new dist 
                     mind[e->to_town][minstateidx] = newdist;
-                    if(e->to_town == ntowns){//got new best sol
-                        countersol = 1;
-                    }
+                    npaths[e->to_town][minstateidx] = npaths[mtidx][minstateidx]%MOD;
                 }
                 else if(olddist == newdist){//new eq sol
-                    if(e->to_town == ntowns){
-                        countersol++;
-                    }
+                    npaths[e->to_town][minstateidx] = (npaths[e->to_town][minstateidx] + npaths[mtidx][minstateidx])%MOD;
                 }
             e=e->next;
             }
-        }}
+        }
         
     }
-    printf("%d %d\n",mind[ntowns][1],countersol);
+    printf("%d %d\n",mind[ntowns][1],npaths[ntowns][1]);
     
 }
 
@@ -92,6 +97,7 @@ int main(){
     for(fromtown=1; fromtown<=ntowns; fromtown++){//lista matrix adj to create adjlist
         for(totown=1; totown<=ntowns; totown++){
             scanf("%d", &len);
+            if(len<=0) continue;
             e = malloc(sizeof(edge));
             if (e == NULL) {
                 fprintf(stderr, "malloc error\n");
