@@ -63,3 +63,7 @@ void exploreCave(int n) {
   // Consegno al judge la configurazione finale e la mappa switch->porta.
   answer(switch_positions, door_for_switch);
 }
+
+int main(){ //placeholder
+  return 0;
+}

@@ -151,3 +151,7 @@ void exploreCave(int n){
     free(s);
     free(d);
 }
+
+int main(){//placeholder x makefile
+    return 0;
+}
